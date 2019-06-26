@@ -20,11 +20,14 @@
 Checks available memory.
 
 Usage:
-
+    <no parameters needed>
 
 Example output:
-
-
+    MEM OK - 16G, 9G available (57%)|\
+        mem_total_kb=16300840K,mem_avail_kb=9298876K,mem_avail_percent=57.\
+        top_1_app=java:1681144:10.3:00_31_06:last-argument,\
+        top_2_app=...\
+        ...
 
 """
 
