@@ -30,6 +30,7 @@ Example output:
 
 import re
 from d3s.nagios import NagiosPluginBase
+from d3s.units import SmartUnit
 
 
 class CheckMemory(NagiosPluginBase):
@@ -66,9 +67,9 @@ class CheckMemory(NagiosPluginBase):
             key = entry.group(1)
             value = entry.group(2)
             if key == 'MemTotal':
-                self.add_perf_data('mem_total_kb', int(value))
+                self.add_perf_data('mem_total_kb', SmartUnit(int(value), 'K'))
             elif key == 'MemAvailable':
-                self.add_perf_data('mem_avail_kb', int(value))
+                self.add_perf_data('mem_avail_kb', SmartUnit(int(value), 'K'))
 
         avail_amount = self.get_perf_data('mem_avail_kb') / self.get_perf_data('mem_total_kb')
         self.add_perf_data('mem_avail_percent', avail_amount * 100)
@@ -97,7 +98,7 @@ class CheckMemory(NagiosPluginBase):
                 break
 
         # Format final message
-        self.set_message_from_perf("{mem_total_kb}, {mem_avail_kb} available"
+        self.set_message_from_perf("{mem_total_kb:smart}, {mem_avail_kb:smart} available"
                                    + " ({mem_avail_percent:.0f}%)")
 
 def main():
