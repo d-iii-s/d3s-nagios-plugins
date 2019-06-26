@@ -24,6 +24,11 @@ Only collects basic system status (uptime, free memory, ...), useful only
 for performance data analysis.
 
 
+### `check_memory`
+
+Checks available memory.
+
+
 ### `check_systemd_service`
 
 Checks that systemd unit is enabled and running.
