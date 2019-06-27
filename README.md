@@ -29,6 +29,11 @@ for performance data analysis.
 Checks available memory.
 
 
+### `check_os_updates`
+
+Checks that GNU/Linux system is up-to-date.
+
+
 ### `check_systemd_service`
 
 Checks that systemd unit is enabled and running.
