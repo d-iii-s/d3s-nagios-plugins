@@ -21,6 +21,7 @@ Nagios-releated utilities.
 """
 
 import subprocess
+import sys
 
 
 class NagiosPluginBase:
@@ -101,7 +102,7 @@ class NagiosPluginBase:
         except StopIteration:
             return False
 
-    def run(self):
+    def run(self, terminate=False):
         """ Main of the plugin that does the work. """
         self.collect()
         status_name = NagiosPluginBase.STATUS_NAMES[self.status_]
@@ -110,6 +111,8 @@ class NagiosPluginBase:
             status=status_name,
             message=self.message_,
             perf=self.format_perf_data_()))
+        if terminate:
+            sys.exit(self.status_)
 
     def format_perf_data_(self):
         """ Formats performance data as CSV. """

@@ -89,7 +89,7 @@ def main():
     """
     Module main for execution from shell script.
     """
-    CheckHealth().run()
+    CheckHealth().run(True)
 
 if __name__ == '__main__':
     main()

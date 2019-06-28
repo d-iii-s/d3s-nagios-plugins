@@ -108,7 +108,7 @@ def main():
     """
     Module main for execution from shell script.
     """
-    CheckMemory().run()
+    CheckMemory().run(True)
 
 if __name__ == '__main__':
     main()

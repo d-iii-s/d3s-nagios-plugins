@@ -87,7 +87,7 @@ def main():
     """
     Module main for execution from shell script.
     """
-    CheckSystemdService().run()
+    CheckSystemdService().run(True)
 
 if __name__ == '__main__':
     main()
