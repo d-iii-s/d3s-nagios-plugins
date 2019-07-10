@@ -106,6 +106,9 @@ class CheckOsUpdates(NagiosPluginBase):
         except IOError:
             pass
 
+        kernel_release = next(self.read_command_output(['uname', '-r']))
+        self.add_perf_data('os_kernel', kernel_release)
+
         os_id = self.get_perf_data('os_id')
         if os_id == 'unknown':
             self.worsen_to_critical()
