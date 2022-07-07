@@ -7,7 +7,7 @@ A collection of various mini-plugins for Nagios.
 ## Installation (inside virtualenv)
 
 ```shell
-virtualenv env
+python -m venv env
 . ./env/bin/activate
 ./setup.py install
 # Now it is possible to run any of the ./env/bin/nagios_d3s_check_* scripts
