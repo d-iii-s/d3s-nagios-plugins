@@ -5,8 +5,9 @@ Summary: Custom Nagios plugins
 
 License: ASL 2.0
 URL: https://lab.d3s.mff.cuni.cz/nagios-plugins/
-VCS: https://github.com/d-iii-s/d3s-nagios-plugins.git
-Source: {{{ git_pack }}}
+VCS: {{{ git_dir_vcs }}}
+
+Source: {{{ git_dir_pack }}}
 
 BuildRequires: python3
 BuildRequires: python3-devel
