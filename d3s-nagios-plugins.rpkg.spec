@@ -21,7 +21,7 @@ Blab blah
 %global debug_package %{nil}
 
 %prep
-{{ git_setup_macro dir_name="d3s-nagios-plugins" }}
+{{{ git_setup_macro dir_name="d3s-nagios-plugins" }}}
 
 %build
 %{__python3} setup.py build
