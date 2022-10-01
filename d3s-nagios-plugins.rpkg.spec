@@ -21,6 +21,7 @@ Blab blah
 %global debug_package %{nil}
 
 %prep
+{{{ git_dir_setup_macro }}}
 %setup
 
 %build
