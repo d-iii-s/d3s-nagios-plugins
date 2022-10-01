@@ -1,5 +1,5 @@
-Name: {{{ git_name name="d3s-nagios-plugins" }}}
-Version: {{{ git_version }}}
+Name: {{{ git_dir_name }}}
+Version: {{{ git_dir_version }}}
 Release: 1%{?dist}
 Summary: Custom Nagios plugins
 
