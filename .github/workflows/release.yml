@@ -9,7 +9,7 @@ env:
   PACKAGE_NAME: d3s-nagios-plugins
   PACKAGE_MAINTAINER: vhotspur
   PACKAGE_SUMMARY: "Collection of various Nagios plugins"
-  PACKAGE_VERSION: 1.0.0
+  PACKAGE_VERSION: 1.0.1
 
 jobs:
   build:
@@ -43,5 +43,4 @@ jobs:
         with:
           body_path: gh-release-body.txt
           files: |
-            msim*.deb
-            msim*.rpm
+            d3s*.deb

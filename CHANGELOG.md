@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 
+## v1.0.1 - 2024-03-20
+
+### Fixed
+
+* Release script (@vhotspur)
+
 ## v1.0.0 - 2024-03-20
 
 ### Changed
