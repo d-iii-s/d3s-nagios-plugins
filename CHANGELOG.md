@@ -24,3 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Packaging setup (@vhotspur)
 * Move changelog to a more structured format (@vhotspur)
+
+### Added
+
+* Automated releases (@vhotspur)
