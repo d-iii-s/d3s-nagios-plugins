@@ -9,7 +9,7 @@ A collection of various mini-plugins for Nagios.
 ```shell
 python -m venv env
 . ./env/bin/activate
-./setup.py install
+pip install -e .
 # Now it is possible to run any of the ./env/bin/nagios_d3s_check_* scripts
 ```
 
