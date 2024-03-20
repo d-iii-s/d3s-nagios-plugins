@@ -1,0 +1,29 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+
+    - name: Install
+      run: pip install .
+
+    - name: Show all plugins
+      run: |
+        nagios_d3s_check_health || true
+        echo
+        nagios_d3s_check_memory || true
+        echo
+        nagios_d3s_check_os_updates || true
+        echo
+        nagios_d3s_check_systemd_service --service sshd || true
