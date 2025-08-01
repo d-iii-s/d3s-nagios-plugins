@@ -24,8 +24,8 @@ Contains plugins check_health, check_memory, check_os_updates and check_systemd_
 %prep
 %autosetup -n d3s_nagios_plugins-%{version}
 
-%generate_buildrequires
 %if 0%{?fedora} >= 36 || 0%{?rhel} >= 9
+%generate_buildrequires
 %pyproject_buildrequires
 %endif
 
