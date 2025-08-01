@@ -11,14 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* SPEC file for RPM packages
-* Add setup.py for backwards compatibility
-
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+## v1.0.4 - 2025-08-01
+
+### Added
+
+* SPEC file for RPM packages
+* Add setup.py for backwards compatibility
 
 ## v1.0.3 - 2025-08-01
 

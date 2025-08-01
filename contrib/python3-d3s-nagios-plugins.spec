@@ -1,11 +1,11 @@
 Name:           python3-d3s-nagios-plugins
-Version:        1.0.3
+Version:        1.0.4
 Release:        1%{?dist}
 Summary:        A collection of various mini-plugins for Nagios
 
 License:        APACHE-2
 URL:            https://github.com/d-iii-s/d3s-nagios-plugins
-Source0:        https://files.pythonhosted.org/packages/ee/1d/bf0011a62f9721c88213efbd9b30d4a66239f517faf30ab277959beac4a6/d3s_nagios_plugins-1.0.3.tar.gz
+Source0:        https://files.pythonhosted.org/packages/source/d/d3s-nagios-plugins/d3s_nagios_plugins-%{version}.tar.gz
 
 BuildArch:      noarch
 
