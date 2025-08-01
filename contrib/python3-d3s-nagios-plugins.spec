@@ -10,6 +10,7 @@ Source0:        https://files.pythonhosted.org/packages/source/d/d3s-nagios-plug
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
 
 # Use pyproject.toml on modern systems
 %if 0%{?fedora} >= 36 || 0%{?rhel} >= 9
