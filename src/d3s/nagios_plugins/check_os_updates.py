@@ -40,7 +40,7 @@ class CheckOsUpdates(NagiosPluginBase):
 
     OS_RELEASE_RE = re.compile('^([a-z_A-Z]+)=["]?([^"]*)["]?$')
 
-    FEDORA_LIST_UPDATES_CMD = [
+    DNF_LIST_UPDATES_CMD = [
         'dnf',
         'list',
         '--quiet',
@@ -67,16 +67,8 @@ class CheckOsUpdates(NagiosPluginBase):
         releases = re.findall(CheckOsUpdates.FEDORA_RELEASE_RE, text)
         return max([int(r) for r in releases])
 
-    def collect_fedora_(self):
-        """ Collect information for Fedora distribution. """
-        self.add_perf_data('os_latest_version', self.get_fedora_latest_())
-        if self.get_perf_data('os_version') + 1 < self.get_perf_data('os_latest_version'):
-            self.worsen_to_critical()
-            message_suffix = ' too old ({os_latest_version} available)'
-        else:
-            message_suffix = ''
-
-        outdated_list = self.read_command_output(CheckOsUpdates.FEDORA_LIST_UPDATES_CMD)
+    def collect_dnf_based_(self, distribution_name, message_suffix):
+        outdated_list = self.read_command_output(CheckOsUpdates.DNF_LIST_UPDATES_CMD)
         outdated = sum(1 for _ in outdated_list)
         # Strip header
         if outdated > 1:
@@ -88,9 +80,23 @@ class CheckOsUpdates(NagiosPluginBase):
         if outdated > self.critical_on:
             self.worsen_to_critical()
 
-        self.set_message_from_perf('Fedora {os_version}' + message_suffix
+        self.set_message_from_perf(distribution_name + ' {os_version}' + message_suffix
                                    + ', {os_outdated_packages} out-dated packages')
 
+
+    def collect_centos_(self):
+        """ Collect information for CentOS distribution. """
+        self.collect_dnf_based_('CentOS', '')
+
+    def collect_fedora_(self):
+        """ Collect information for Fedora distribution. """
+        self.add_perf_data('os_latest_version', self.get_fedora_latest_())
+        if self.get_perf_data('os_version') + 1 < self.get_perf_data('os_latest_version'):
+            self.worsen_to_critical()
+            message_suffix = ' too old ({os_latest_version} available)'
+        else:
+            message_suffix = ''
+        self.collect_dnf_based_('Fedora', message_suffix)
 
     def collect(self):
         self.add_perf_data('os_id', 'unknown')
@@ -115,6 +121,8 @@ class CheckOsUpdates(NagiosPluginBase):
             self.set_message('unknown OS')
         elif os_id == 'fedora':
             self.collect_fedora_()
+        elif os_id == 'centos':
+            self.collect_centos_()
         else:
             self.worsen_to_critical()
             self.set_message_from_perf('unsupported OS {os_id}')
