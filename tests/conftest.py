@@ -1,4 +1,6 @@
 
+import sys
+
 import pytest
 
 class MockPlugin:
@@ -30,7 +32,7 @@ class MockPlugin:
     def get_stdout(self):
         return self.captured.out.rstrip()
 
-    def run(self, plugin):
+    def run(self, plugin, *args):
         self.patcher.setattr(
             plugin,
             'read_file',
@@ -40,6 +42,11 @@ class MockPlugin:
             plugin,
             'read_command_output',
             lambda x: self.mock_read_command_output(x)
+        )
+        self.patcher.setattr(
+            sys,
+            'argv',
+            [str(plugin.__class__)] + list(args),
         )
         plugin.run()
         self.captured = self.capturer.readouterr()

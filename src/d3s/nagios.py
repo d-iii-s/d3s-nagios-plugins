@@ -20,6 +20,7 @@
 Nagios-releated utilities.
 """
 
+import argparse
 import subprocess
 import sys
 
@@ -40,6 +41,18 @@ class NagiosPluginBase:
         self.status_ = 0
         self.message_ = "empty message"
         self.perf_data_ = {}
+        self.params = {}
+
+    def add_param(self, dest, default_value, param_name, type=None):
+        if type is None:
+            if isinstance(default_value, float):
+                type = float
+        self.params[param_name] = {
+            'dest': dest,
+            'type': type,
+        }
+        setattr(self, dest, default_value)
+
 
     def collect(self):
         """ Called from run() to actually ollect monitored information. """
@@ -102,8 +115,37 @@ class NagiosPluginBase:
         except StopIteration:
             return False
 
+    def get_help_text(self):
+        parts = self.__doc__.split("\n===\n", 2)
+        if len(parts) == 1:
+            return (parts[0], parts[0])
+        else:
+            return (parts[0], parts[1])
+
+    def process_args(self):
+        prolog, epilog = self.get_help_text()
+
+        parser = argparse.ArgumentParser(
+            description=prolog,
+            epilog=epilog,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
+        for param_name, info in self.params.items():
+            parser.add_argument(
+                param_name,
+                dest=info['dest'],
+                default=None,
+                type=info['type']
+            )
+        args = parser.parse_args()
+        for param_name, info in self.params.items():
+            val = getattr(args, info['dest'])
+            if val is not None:
+                setattr(self, info['dest'], val)
+
     def run(self, terminate=False):
         """ Main of the plugin that does the work. """
+        self.process_args()
         self.collect()
         status_name = NagiosPluginBase.STATUS_NAMES[self.status_]
         print("{name} {status} - {message}{perf}".format(
