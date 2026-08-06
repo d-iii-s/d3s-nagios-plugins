@@ -16,21 +16,6 @@
 # limitations under the License.
 #
 
-"""
-Checks available memory.
-
-Usage:
-    <no parameters needed>
-
-Example output:
-    MEM OK - 16G, 9G available (57%)|\
-        mem_total_kb=16300840K,mem_avail_kb=9298876K,mem_avail_percent=57.\
-        top_1_app=java:1681144:10.3:00_31_06:last-argument,\
-        top_2_app=...\
-        ...
-
-"""
-
 import re
 from d3s.nagios import NagiosPluginBase
 from d3s.units import SmartUnit
@@ -41,6 +26,16 @@ class CheckMemory(NagiosPluginBase):
     Checks available memory and warns if there is not enough memory.
 
     Also reports top memory-eaters.
+
+    ===
+
+    Example output:
+
+    MEM OK - 16G, 9G available (57%)| \\
+        mem_total_kb=16300840K,mem_avail_kb=9298876K,mem_avail_percent=57., \\
+        top_1_app=java:1681144:10.3:00_31_06:last-argument, \\
+        top_2_app=... \\
+        ...
     """
 
     MEM_INFO_RE = re.compile('^([^:]*):[ \t]*([0-9]*) kB$')
@@ -61,8 +56,8 @@ class CheckMemory(NagiosPluginBase):
     def __init__(self):
         NagiosPluginBase.__init__(self, 'MEM')
         self.top_eaters_count = 5
-        self.warn_on = 0.1
-        self.critical_on = 0.05
+        self.add_param('warn_on', 0.1, '--warning-on')
+        self.add_param('critical_on', 0.05, '--critical-on')
 
     def collect(self):
         # Read memory information
