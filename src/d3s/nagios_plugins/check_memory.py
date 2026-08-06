@@ -70,9 +70,9 @@ class CheckMemory(NagiosPluginBase):
             key = entry.group(1)
             value = entry.group(2)
             if key == 'MemTotal':
-                self.add_perf_data('mem_total_kb', SmartUnit(int(value), 'K'))
+                self.add_perf_data('mem_total_kb', SmartUnit.from_string(value + 'kB'))
             elif key == 'MemAvailable':
-                self.add_perf_data('mem_avail_kb', SmartUnit(int(value), 'K'))
+                self.add_perf_data('mem_avail_kb', SmartUnit.from_string(value + 'kB'))
 
         avail_amount = self.get_perf_data('mem_avail_kb') / self.get_perf_data('mem_total_kb')
         self.add_perf_data('mem_avail_percent', avail_amount * 100)
