@@ -53,7 +53,7 @@ class CheckOsUpdates(NagiosPluginBase):
         res = ''
         return res
 
-    def make_summary_parts_(self, distribution_name):
+    def get_summary_message_parts_(self, distribution_name):
         yield f'{distribution_name} {{os_version}}'
 
         if not self.get_perf_data('os_is_maintained'):
@@ -70,11 +70,16 @@ class CheckOsUpdates(NagiosPluginBase):
 
         yield ' {os_outdated_packages} out-dated packages'
 
-    def make_summary_(self, distribution_name):
-        return ''.join(self.make_summary_parts_(distribution_name))
+    def finalize_outcome_(self, distribution_name):
+        msg = ''.join(self.get_summary_message_parts_(distribution_name))
+        self.set_message_from_perf(msg)
 
+        outdated = self.get_perf_data('os_outdated_packages')
+        if outdated > self.warn_on:
+            self.worsen_to_warning()
+        if outdated > self.critical_on:
+            self.worsen_to_critical()
 
-    def set_state_from_eol_(self):
         if self.get_perf_data('os_version') != self.get_perf_data('os_latest_version'):
             self.worsen_to_warning()
         if not self.get_perf_data('os_is_maintained'):
@@ -119,12 +124,8 @@ class CheckOsUpdates(NagiosPluginBase):
         security_updates = len([i for i in outdated_list if i['type'] == 'security'])
         self.add_perf_data('os_security_updates', security_updates)
 
-        if outdated > self.warn_on:
-            self.worsen_to_warning()
-        if outdated > self.critical_on:
-            self.worsen_to_critical()
+        self.finalize_outcome_(distribution_name)
 
-        self.set_message_from_perf(self.make_summary_(distribution_name))
 
     def collect_centos_(self):
         """ Collect information for CentOS distribution. """
@@ -173,8 +174,6 @@ class CheckOsUpdates(NagiosPluginBase):
         else:
             self.worsen_to_critical()
             self.set_message_from_perf('unsupported OS {os_id}')
-
-        self.set_state_from_eol_()
 
 
 def main():
