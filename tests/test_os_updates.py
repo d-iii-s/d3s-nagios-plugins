@@ -38,6 +38,17 @@ FEDORA-2026-0000000002 security    Low                                  charlie-
     mp.run(CheckOsUpdates())
     assert mp.get_stdout() == "OS-UPDATES OK - Fedora 43, 1 security updates, 3 out-dated packages|os_id=fedora,os_is_maintained=true,os_kernel=7.0.0-test.fc43.x86_64,os_latest_version=43,os_outdated_packages=3,os_security_updates=1,os_version=43"
 
+def test_fedora_with_critical_updates(mp):
+    patch_for_fedora(mp, 43, '7.0.0-test.fc43.x86_64',
+"""
+Name                   Type        Severity                                                 Package              Issued
+FEDORA-2026-0000000000 bugfix      None                                   alpha-1.2.3-2.fc43.x86_64 2026-01-01 00:00:00
+FEDORA-2026-0000000001 security    None                                   bravo-1.2.3-2.fc43.x86_64 2026-01-02 00:00:00
+FEDORA-2026-0000000002 security    Low                                  charlie-1.2.3-2.fc43.x86_64 2026-01-03 00:00:00
+""")
+    mp.run(CheckOsUpdates(), '--security-updates-warning-limit=1')
+    assert mp.get_stdout() == "OS-UPDATES WARNING - Fedora 43, 2 security updates, 3 out-dated packages|os_id=fedora,os_is_maintained=true,os_kernel=7.0.0-test.fc43.x86_64,os_latest_version=43,os_outdated_packages=3,os_security_updates=2,os_version=43"
+
 def test_fedora_outdated(mp):
     patch_for_fedora(mp, 42, '7.0.0-test.fc42.x86_64',
 """
