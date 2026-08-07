@@ -16,20 +16,7 @@
 # limitations under the License.
 #
 
-"""
-Checks avaiable updates.
-
-Usage:
-    <no parameters needed>
-
-Example output:
-
-
-
-"""
-
 import re
-import urllib.request
 from d3s.nagios import NagiosPluginBase
 
 
@@ -44,7 +31,7 @@ class CheckOsUpdates(NagiosPluginBase):
         'dnf',
         'list',
         '--quiet',
-        'updates'
+        '--upgrades',
     ]
 
     FEDORA_RELEASE_LIST_URL = 'https://download.fedoraproject.org/pub/fedora/linux/releases/'
@@ -59,17 +46,40 @@ class CheckOsUpdates(NagiosPluginBase):
         self.warn_on = 50
         self.critical_on = 200
 
-    # pylint: disable=no-self-use
-    def get_fedora_latest_(self):
-        """ Get latest Fedora release as integer. """
-        response = urllib.request.urlopen(CheckOsUpdates.FEDORA_RELEASE_LIST_URL)
-        text = response.read().decode('utf-8')
-        releases = re.findall(CheckOsUpdates.FEDORA_RELEASE_RE, text)
-        return max([int(r) for r in releases])
+    def update_eol_(self, product_id):
+        eol_info = self.get_endoflife_info(
+            product_id,
+            self.get_perf_data('os_version')
+        )
+        self.add_perf_data('os_latest_version', eol_info['latest'])
+        self.add_perf_data('os_is_maintained', eol_info['is_maintained'])
 
-    def collect_dnf_based_(self, distribution_name, message_suffix):
-        outdated_list = self.read_command_output(CheckOsUpdates.DNF_LIST_UPDATES_CMD)
-        outdated = sum(1 for _ in outdated_list)
+    def get_release_info_message_(self):
+        res = ''
+        if not self.get_perf_data('os_is_maintained'):
+            res = ' is past its EOL'
+        latest = self.get_perf_data('os_latest_version')
+        if self.get_perf_data('os_version') == latest:
+            # res = f'{res} (latest)'
+            pass
+        else:
+            res = f'{res} ({latest} available)'
+        return res
+
+    def set_state_from_eol_(self):
+        if self.get_perf_data('os_version') != self.get_perf_data('os_latest_version'):
+            self.worsen_to_warning()
+        if not self.get_perf_data('os_is_maintained'):
+            self.worsen_to_critical()
+
+
+    def collect_dnf_based_(self, distribution_name):
+        outdated_list = list(
+            self.non_empty_lines(
+                self.read_command_output(CheckOsUpdates.DNF_LIST_UPDATES_CMD)
+            )
+        )
+        outdated = len(outdated_list)
         # Strip header
         if outdated > 1:
             outdated = outdated - 1
@@ -80,25 +90,22 @@ class CheckOsUpdates(NagiosPluginBase):
         if outdated > self.critical_on:
             self.worsen_to_critical()
 
-        self.set_message_from_perf(distribution_name + ' {os_version}' + message_suffix
-                                   + ', {os_outdated_packages} out-dated packages')
-
+        message_suffix = self.get_release_info_message_()
+        message_main = distribution_name + ' {os_version}' + message_suffix + ', '
+        message_details = '{os_outdated_packages} out-dated packages'
+        self.set_message_from_perf(message_main + message_details)
 
     def collect_centos_(self):
         """ Collect information for CentOS distribution. """
-        self.collect_dnf_based_('CentOS', '')
+        self.update_eol_('centos')
+        self.collect_dnf_based_('CentOS')
 
     def collect_fedora_(self):
         """ Collect information for Fedora distribution. """
-        self.add_perf_data('os_latest_version', self.get_fedora_latest_())
-        if self.get_perf_data('os_version') + 1 < self.get_perf_data('os_latest_version'):
-            self.worsen_to_critical()
-            message_suffix = ' too old ({os_latest_version} available)'
-        else:
-            message_suffix = ''
-        self.collect_dnf_based_('Fedora', message_suffix)
+        self.update_eol_('fedora')
+        self.collect_dnf_based_('Fedora')
 
-    def collect(self):
+    def determine_os_release_(self):
         self.add_perf_data('os_id', 'unknown')
         try:
             release_file = self.read_file('/etc/os-release')
@@ -111,6 +118,9 @@ class CheckOsUpdates(NagiosPluginBase):
                     self.add_perf_data('os_version', int(value))
         except IOError:
             pass
+
+    def collect(self):
+        self.determine_os_release_()
 
         kernel_release = next(self.read_command_output(['uname', '-r']))
         self.add_perf_data('os_kernel', kernel_release)
@@ -126,6 +136,8 @@ class CheckOsUpdates(NagiosPluginBase):
         else:
             self.worsen_to_critical()
             self.set_message_from_perf('unsupported OS {os_id}')
+
+        self.set_state_from_eol_()
 
 
 def main():
