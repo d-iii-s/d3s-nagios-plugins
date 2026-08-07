@@ -107,6 +107,14 @@ class NagiosPluginBase:
             if res is not None:
                 yield res
 
+    # pylint: disable=no-self-use
+    def non_empty_lines(self, lines):
+        """ Return only non-empty lines (after strip) """
+        for line in lines:
+            if line.strip() != "":
+                yield line
+
+
     def contains_line(self, regexp, lines):
         """ Returns whether some line matches regular expression. """
         try:
