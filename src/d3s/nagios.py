@@ -21,8 +21,10 @@ Nagios-releated utilities.
 """
 
 import argparse
+import json
 import subprocess
 import sys
+import urllib.request
 
 
 class NagiosPluginBase:
@@ -98,6 +100,32 @@ class NagiosPluginBase:
             for line in proc.stdout:
                 yield line.decode('utf-8').rstrip()
             proc.wait()
+
+    # pylint: disable=no-self-use
+    def make_http_get_json(self, url):
+        req = urllib.request.Request(
+            url,
+            headers={
+                'Accept': 'application/json'
+            },
+        )
+
+        response = urllib.request.urlopen(req)
+        text = response.read().decode('utf-8')
+        return json.decode(text)
+
+
+    def get_endoflife_info(self, product, release):
+        base_url = f"https://endoflife.date/api/v1/products/{product}/releases/"
+        current = self.make_http_get_json(base_url + release)
+        latest = self.make_http_get_json(base_url + "latest")
+        return {
+            'product': product,
+            'release': response['result']['label'],
+            'latest': latest['result']['label'],
+            'is_maintained': response['result']['isMaintained'],
+        }
+
 
     # pylint: disable=no-self-use
     def grep_lines(self, regexp, lines):

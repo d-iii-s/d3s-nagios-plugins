@@ -9,12 +9,19 @@ class MockPlugin:
         self.patcher = patcher
         self.patched_files = {}
         self.patched_processes = {}
+        self.patched_eols = {}
         self.captured = None
+
+    def patch_file(self, filename, contents):
+        self.patched_files[filename] = contents
 
     def mock_read_file(self, filename):
         assert filename in self.patched_files.keys()
         for line in self.patched_files[filename].split('\n'):
             yield line.rstrip()
+
+    def patch_process(self, cmdline, output):
+        self.patched_processes[cmdline] = output
 
     def mock_read_command_output(self, cmdline):
         cmdline = ' '.join(cmdline)
@@ -22,15 +29,22 @@ class MockPlugin:
         for line in self.patched_processes[cmdline].split('\n'):
             yield line.rstrip()
 
-
-    def patch_file(self, filename, contents):
-        self.patched_files[filename] = contents
-
-    def patch_process(self, cmdline, output):
-        self.patched_processes[cmdline] = output
-
     def get_stdout(self):
         return self.captured.out.rstrip()
+
+    def patch_eol(self, product, release, is_maintained, latest):
+        self.patched_eols[f'{product}--{release}'] = {
+            'product': product,
+            'release': release,
+            'latest': latest,
+            'is_maintained': is_maintained,
+        }
+
+    def mock_get_endoflife_info(self, product, release):
+        key = f'{product}--{release}'
+        assert key in self.patched_eols.keys()
+        return self.patched_eols[key]
+
 
     def run(self, plugin, *args):
         self.patcher.setattr(
@@ -42,6 +56,11 @@ class MockPlugin:
             plugin,
             'read_command_output',
             lambda x: self.mock_read_command_output(x)
+        )
+        self.patcher.setattr(
+            plugin,
+            'get_endoflife_info',
+            lambda p, v: self.mock_get_endoflife_info(p, v)
         )
         self.patcher.setattr(
             sys,
