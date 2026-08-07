@@ -11,9 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* `os_updates`: basic support for CentOS
 * Add basic unit tests
 * Argument processing for plugins
+* `os_updates`: support for CentOS
+* `os_updates`: parameters for limits
+* `os_updates`: set status based on amount of security updates
 
 ### Changed
 
