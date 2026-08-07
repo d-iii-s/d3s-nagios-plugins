@@ -161,6 +161,10 @@ class NagiosPluginBase:
         if not self.perf_data_:
             return ""
         res = []
-        for key, value in self.perf_data_.items():
+        keys = sorted(self.perf_data_.keys())
+        for key in keys:
+            value = self.perf_data_[key]
+            if isinstance(value, bool):
+                value = str(value).lower()
             res.append("{}={}".format(key, value))
         return "|{}".format(",".join(res))

@@ -30,14 +30,14 @@ Active:          9639528 kB
 
 def test_smoke(mp):
     mp.run(CheckMemory())
-    assert mp.get_stdout() == "MEM OK - 31GB, 19GB available (61%)|mem_total_kb=32775876kB,mem_avail_kb=19941800kB,mem_avail_percent=60.84291995734912,top_1_app=alpha:699324:4.2:00_02_16:--zulu,top_2_app=bravo:217136:1.3:00_07_41:--yankee,top_3_app=charlie:199548:1.2:00_00_20:/bin/charlie,top_4_app=delta:160780:0.9:00_02_05:--whiskey,top_5_app=echo:159988:0.9:00_00_18:-V"
+    assert mp.get_stdout() == "MEM OK - 31GB, 19GB available (61%)|mem_avail_kb=19941800kB,mem_avail_percent=60.84291995734912,mem_total_kb=32775876kB,top_1_app=alpha:699324:4.2:00_02_16:--zulu,top_2_app=bravo:217136:1.3:00_07_41:--yankee,top_3_app=charlie:199548:1.2:00_00_20:/bin/charlie,top_4_app=delta:160780:0.9:00_02_05:--whiskey,top_5_app=echo:159988:0.9:00_00_18:-V"
 
 def test_warning(mp):
     mp.run(CheckMemory(), '--warning-on=0.7')
-    assert mp.get_stdout() == "MEM WARNING - 31GB, 19GB available (61%)|mem_total_kb=32775876kB,mem_avail_kb=19941800kB,mem_avail_percent=60.84291995734912,top_1_app=alpha:699324:4.2:00_02_16:--zulu,top_2_app=bravo:217136:1.3:00_07_41:--yankee,top_3_app=charlie:199548:1.2:00_00_20:/bin/charlie,top_4_app=delta:160780:0.9:00_02_05:--whiskey,top_5_app=echo:159988:0.9:00_00_18:-V"
+    assert mp.get_stdout() == "MEM WARNING - 31GB, 19GB available (61%)|mem_avail_kb=19941800kB,mem_avail_percent=60.84291995734912,mem_total_kb=32775876kB,top_1_app=alpha:699324:4.2:00_02_16:--zulu,top_2_app=bravo:217136:1.3:00_07_41:--yankee,top_3_app=charlie:199548:1.2:00_00_20:/bin/charlie,top_4_app=delta:160780:0.9:00_02_05:--whiskey,top_5_app=echo:159988:0.9:00_00_18:-V"
 
 def test_critical(mp):
     mp.run(CheckMemory(), '--critical-on=0.7')
-    assert mp.get_stdout() == "MEM CRITICAL - 31GB, 19GB available (61%)|mem_total_kb=32775876kB,mem_avail_kb=19941800kB,mem_avail_percent=60.84291995734912,top_1_app=alpha:699324:4.2:00_02_16:--zulu,top_2_app=bravo:217136:1.3:00_07_41:--yankee,top_3_app=charlie:199548:1.2:00_00_20:/bin/charlie,top_4_app=delta:160780:0.9:00_02_05:--whiskey,top_5_app=echo:159988:0.9:00_00_18:-V"
+    assert mp.get_stdout() == "MEM CRITICAL - 31GB, 19GB available (61%)|mem_avail_kb=19941800kB,mem_avail_percent=60.84291995734912,mem_total_kb=32775876kB,top_1_app=alpha:699324:4.2:00_02_16:--zulu,top_2_app=bravo:217136:1.3:00_07_41:--yankee,top_3_app=charlie:199548:1.2:00_00_20:/bin/charlie,top_4_app=delta:160780:0.9:00_02_05:--whiskey,top_5_app=echo:159988:0.9:00_00_18:-V"
 
 
