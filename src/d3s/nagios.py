@@ -49,6 +49,8 @@ class NagiosPluginBase:
         if type is None:
             if isinstance(default_value, float):
                 type = float
+            if isinstance(default_value, int):
+                type = int
         self.params[param_name] = {
             'dest': dest,
             'type': type,
