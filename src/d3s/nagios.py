@@ -38,6 +38,8 @@ class NagiosPluginBase:
 
     STATUS_NAMES = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
+    REQUIRED_PARAMETER = object()
+
     def __init__(self, name):
         self.name_ = name
         self.status_ = 0
@@ -54,6 +56,7 @@ class NagiosPluginBase:
         self.params[param_name] = {
             'dest': dest,
             'type': type,
+            'required': default_value is NagiosPluginBase.REQUIRED_PARAMETER,
         }
         setattr(self, dest, default_value)
 
@@ -173,7 +176,8 @@ class NagiosPluginBase:
                 param_name,
                 dest=info['dest'],
                 default=None,
-                type=info['type']
+                type=info['type'],
+                required=info['required'],
             )
         args = parser.parse_args()
         for param_name, info in self.params.items():
