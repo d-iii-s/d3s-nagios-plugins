@@ -57,7 +57,7 @@ class NagiosPluginBase:
 
 
     def collect(self):
-        """ Called from run() to actually ollect monitored information. """
+        """ Called from run() to actually collect monitored information. """
         raise NotImplementedError("Re-implement in subclass!")
 
     def add_perf_data(self, name, value):
@@ -112,18 +112,18 @@ class NagiosPluginBase:
 
         response = urllib.request.urlopen(req)
         text = response.read().decode('utf-8')
-        return json.decode(text)
+        return json.loads(text)
 
 
     def get_endoflife_info(self, product, release):
         base_url = f"https://endoflife.date/api/v1/products/{product}/releases/"
-        current = self.make_http_get_json(base_url + release)
+        current = self.make_http_get_json(base_url + str(release))
         latest = self.make_http_get_json(base_url + "latest")
         return {
             'product': product,
-            'release': response['result']['label'],
-            'latest': latest['result']['label'],
-            'is_maintained': response['result']['isMaintained'],
+            'release': str(current['result']['label']),
+            'latest': str(latest['result']['label']),
+            'is_maintained': current['result']['isMaintained'],
         }
 
 

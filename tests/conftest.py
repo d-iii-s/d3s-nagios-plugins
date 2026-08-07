@@ -35,8 +35,8 @@ class MockPlugin:
     def patch_eol(self, product, release, is_maintained, latest):
         self.patched_eols[f'{product}--{release}'] = {
             'product': product,
-            'release': release,
-            'latest': latest,
+            'release': str(release),
+            'latest': str(latest),
             'is_maintained': is_maintained,
         }
 

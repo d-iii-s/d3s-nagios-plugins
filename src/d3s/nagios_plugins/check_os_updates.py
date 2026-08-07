@@ -34,13 +34,6 @@ class CheckOsUpdates(NagiosPluginBase):
         '--upgrades',
     ]
 
-    FEDORA_RELEASE_LIST_URL = 'https://download.fedoraproject.org/pub/fedora/linux/releases/'
-
-    FEDORA_RELEASE_RE = re.compile('''
-        a\\s+
-        href=['"]([0-9]+)/?['"][ \t>]
-        ''', re.VERBOSE)
-
     def __init__(self):
         NagiosPluginBase.__init__(self, 'OS-UPDATES')
         self.warn_on = 50
@@ -97,7 +90,10 @@ class CheckOsUpdates(NagiosPluginBase):
 
     def collect_centos_(self):
         """ Collect information for CentOS distribution. """
-        self.update_eol_('centos')
+        if self.distribution_name == 'CentOS Stream':
+            self.update_eol_('centos-stream')
+        else:
+            self.update_eol_('centos')
         self.collect_dnf_based_('CentOS')
 
     def collect_fedora_(self):
@@ -106,6 +102,7 @@ class CheckOsUpdates(NagiosPluginBase):
         self.collect_dnf_based_('Fedora')
 
     def determine_os_release_(self):
+        self.distribution_name = ''
         self.add_perf_data('os_id', 'unknown')
         try:
             release_file = self.read_file('/etc/os-release')
@@ -115,7 +112,9 @@ class CheckOsUpdates(NagiosPluginBase):
                 if key == 'ID':
                     self.add_perf_data('os_id', value)
                 elif key == 'VERSION_ID':
-                    self.add_perf_data('os_version', int(value))
+                    self.add_perf_data('os_version', value)
+                elif key == 'NAME':
+                    self.distribution_name = value
         except IOError:
             pass
 
