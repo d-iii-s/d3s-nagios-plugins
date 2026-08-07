@@ -16,27 +16,21 @@
 # limitations under the License.
 #
 
-"""
-Checks that systemd unit is enabled and running.
-
-Usage:
-  --service UNIT
-
-Example output:
-
-    SRV OK - httpd running, 12.6M, 6 tasks|\
-        service_name=httpd,service_tasks=6,service_memory=12.6M
-
-"""
 
 import re
-import argparse
 from d3s.nagios import NagiosPluginBase
 
 
 class CheckSystemdService(NagiosPluginBase):
     """
     Checks that given service is running and enabled.
+
+    ===
+
+    Example output:
+
+    SRV OK - httpd running, 12.6M, 6 tasks| \\
+        service_name=httpd,service_tasks=6,service_memory=12.6M
     """
 
     DETAILS_BASE_RE = re.compile('''
@@ -48,10 +42,7 @@ class CheckSystemdService(NagiosPluginBase):
 
     def __init__(self):
         NagiosPluginBase.__init__(self, 'SRV')
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--service', dest='service', metavar='UNIT', required=True)
-        args = parser.parse_args()
-        self.service = args.service
+        self.add_param('service', NagiosPluginBase.REQUIRED_PARAMETER, '--service')
 
     def collect(self):
         self.add_perf_data('service_name', self.service)
