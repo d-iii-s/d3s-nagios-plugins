@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `os_updates`: support for CentOS
 * `os_updates`: parameters for limits
 * `os_updates`: set status based on amount of security updates
+* CI: run pytest suite
 
 ### Changed
 
