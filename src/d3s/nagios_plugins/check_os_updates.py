@@ -28,10 +28,12 @@ class CheckOsUpdates(NagiosPluginBase):
     OS_RELEASE_RE = re.compile('^([a-z_A-Z]+)=["]?([^"]*)["]?$')
 
     DNF_LIST_UPDATES_CMD = [
+        'env',
+        'LC_ALL=C',
         'dnf',
+        'updateinfo',
         'list',
         '--quiet',
-        '--upgrades',
     ]
 
     def __init__(self):
@@ -49,15 +51,28 @@ class CheckOsUpdates(NagiosPluginBase):
 
     def get_release_info_message_(self):
         res = ''
-        if not self.get_perf_data('os_is_maintained'):
-            res = ' is past its EOL'
-        latest = self.get_perf_data('os_latest_version')
-        if self.get_perf_data('os_version') == latest:
-            # res = f'{res} (latest)'
-            pass
-        else:
-            res = f'{res} ({latest} available)'
         return res
+
+    def make_summary_parts_(self, distribution_name):
+        yield f'{distribution_name} {{os_version}}'
+
+        if not self.get_perf_data('os_is_maintained'):
+            yield ' is past its EOL'
+
+        latest = self.get_perf_data('os_latest_version')
+        if self.get_perf_data('os_version') != latest:
+            yield f' ({latest} available)'
+
+        yield ','
+
+        if self.get_perf_data('os_security_updates') > 0:
+            yield ' {os_security_updates} security updates,'
+
+        yield ' {os_outdated_packages} out-dated packages'
+
+    def make_summary_(self, distribution_name):
+        return ''.join(self.make_summary_parts_(distribution_name))
+
 
     def set_state_from_eol_(self):
         if self.get_perf_data('os_version') != self.get_perf_data('os_latest_version'):
@@ -65,28 +80,51 @@ class CheckOsUpdates(NagiosPluginBase):
         if not self.get_perf_data('os_is_maintained'):
             self.worsen_to_critical()
 
+    def dnf_process_outdated_list_(self, outdated):
+        def parse_by_column_(col):
+            if len(col) < 2:
+                return (None, None, None)
+            elif len(col) == 3:
+                return (col[0], col[2], col[1])
+            elif len(col) == 5:
+                return (col[0], col[3], col[1])
+            else:
+                # Let us hope type is always second column
+                return (col[0], 'unknown', col[1])
+
+        for idx, line in enumerate(outdated):
+            # Header
+            if (idx == 0) and line.startswith('Name '):
+                continue
+            (update_id, update_pkg, update_type) = parse_by_column_(line.split())
+            if not update_id:
+                continue
+            if update_type.endswith('/Sec.'):
+                update_type = 'security'
+            yield {
+                'bug_id': update_id,
+                'package': update_pkg,
+                'type': update_type,
+            }
+
 
     def collect_dnf_based_(self, distribution_name):
         outdated_list = list(
-            self.non_empty_lines(
+            self.dnf_process_outdated_list_(
                 self.read_command_output(CheckOsUpdates.DNF_LIST_UPDATES_CMD)
             )
         )
         outdated = len(outdated_list)
-        # Strip header
-        if outdated > 1:
-            outdated = outdated - 1
         self.add_perf_data('os_outdated_packages', outdated)
+        security_updates = len([i for i in outdated_list if i['type'] == 'security'])
+        self.add_perf_data('os_security_updates', security_updates)
 
         if outdated > self.warn_on:
             self.worsen_to_warning()
         if outdated > self.critical_on:
             self.worsen_to_critical()
 
-        message_suffix = self.get_release_info_message_()
-        message_main = distribution_name + ' {os_version}' + message_suffix + ', '
-        message_details = '{os_outdated_packages} out-dated packages'
-        self.set_message_from_perf(message_main + message_details)
+        self.set_message_from_perf(self.make_summary_(distribution_name))
 
     def collect_centos_(self):
         """ Collect information for CentOS distribution. """
