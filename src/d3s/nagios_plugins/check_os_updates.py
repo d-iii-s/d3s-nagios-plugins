@@ -31,6 +31,15 @@ class CheckOsUpdates(NagiosPluginBase):
         'env',
         'LC_ALL=C',
         'dnf',
+        'list',
+        '--updates',
+        '--quiet',
+    ]
+
+    DNF_UPDATEINFO_CMD = [
+        'env',
+        'LC_ALL=C',
+        'dnf',
         'updateinfo',
         'list',
         '--quiet',
@@ -97,6 +106,16 @@ class CheckOsUpdates(NagiosPluginBase):
             self.worsen_to_critical()
 
     def dnf_process_outdated_list_(self, outdated):
+        for idx, line in enumerate(outdated):
+            # Skip header
+            if (idx == 0):
+                continue
+            parts = line.split()
+            yield {
+                'package': parts[0],
+            }
+
+    def dnf_process_security_list_(self, outdated):
         def parse_by_column_(col):
             if len(col) < 2:
                 return (None, None, None)
@@ -125,6 +144,11 @@ class CheckOsUpdates(NagiosPluginBase):
 
 
     def collect_dnf_based_(self, distribution_name):
+        security_list = list(
+            self.dnf_process_security_list_(
+                self.read_command_output(CheckOsUpdates.DNF_UPDATEINFO_CMD)
+            )
+        )
         outdated_list = list(
             self.dnf_process_outdated_list_(
                 self.read_command_output(CheckOsUpdates.DNF_LIST_UPDATES_CMD)
@@ -132,7 +156,7 @@ class CheckOsUpdates(NagiosPluginBase):
         )
         outdated = len(outdated_list)
         self.add_perf_data('os_outdated_packages', outdated)
-        security_updates = len([i for i in outdated_list if i['type'] == 'security'])
+        security_updates = len([i for i in security_list if i['type'] == 'security'])
         self.add_perf_data('os_security_updates', security_updates)
 
         self.finalize_outcome_(distribution_name)
