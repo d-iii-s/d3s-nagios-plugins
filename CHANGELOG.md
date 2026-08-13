@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* `os_updates`: correctly print amount of updatable packages
-
 ### Added
 
 ### Changed
@@ -18,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+
+## v2.0.1 - 2026-08-13
+
+### Fixed
+
+* `os_updates`: correctly print amount of updatable packages
+
 
 ## v2.0.0 - 2026-08-13
 
