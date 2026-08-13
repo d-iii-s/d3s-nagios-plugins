@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+## v2.0.0 - 2026-08-13
+
+### Added
+
 * Add basic unit tests
 * Argument processing for plugins
 * `os_updates`: support for CentOS
@@ -23,9 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Get Fedora EOL from endoflife.date API
 * `os_updates` can trigger earlier (when security updates are available)
 
-### Deprecated
-
-### Removed
 
 ## v1.0.4 - 2025-08-01
 

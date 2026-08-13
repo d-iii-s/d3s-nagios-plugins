@@ -1,5 +1,5 @@
 Name:           python3-d3s-nagios-plugins
-Version:        1.0.4
+Version:        2.0.0
 Release:        1%{?dist}
 Summary:        A collection of various mini-plugins for Nagios
 
