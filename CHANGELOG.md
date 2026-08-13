@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Get Fedora EOL from endoflife.date API
+* `os_updates` can trigger earlier (when security updates are available)
 
 ### Deprecated
 
