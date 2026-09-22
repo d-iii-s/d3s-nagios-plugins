@@ -34,6 +34,11 @@ Checks available memory.
 Checks that GNU/Linux system is up-to-date.
 
 
+### `check_sssd`
+
+Checks that SSSD domain is online.
+
+
 ### `check_systemd_service`
 
 Checks that systemd unit is enabled and running.
