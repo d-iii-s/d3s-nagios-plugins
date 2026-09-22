@@ -101,7 +101,7 @@ class NagiosPluginBase:
     # pylint: disable=no-self-use
     def read_command_output(self, cmd):
         """ Run given command and return list of lines on stdout (rstripped). """
-        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL) as proc:
             for line in proc.stdout:
                 yield line.decode('utf-8').rstrip()
             proc.wait()
