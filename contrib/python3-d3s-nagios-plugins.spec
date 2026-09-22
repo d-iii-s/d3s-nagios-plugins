@@ -1,6 +1,6 @@
 Name:           python3-d3s-nagios-plugins
 Version:        2.1.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A collection of various mini-plugins for Nagios
 
 License:        APACHE-2
@@ -49,6 +49,7 @@ install -d %{buildroot}%{_libdir}/nagios/plugins
 mv %{buildroot}%{_bindir}/nagios_d3s_check_health %{buildroot}%{_libdir}/nagios/plugins/check_health
 mv %{buildroot}%{_bindir}/nagios_d3s_check_memory %{buildroot}%{_libdir}/nagios/plugins/check_memory
 mv %{buildroot}%{_bindir}/nagios_d3s_check_os_updates %{buildroot}%{_libdir}/nagios/plugins/check_os_updates
+mv %{buildroot}%{_bindir}/nagios_d3s_check_sssd %{buildroot}%{_libdir}/nagios/plugins/check_sssd
 mv %{buildroot}%{_bindir}/nagios_d3s_check_systemd_service %{buildroot}%{_libdir}/nagios/plugins/check_systemd_service
 
 %files
