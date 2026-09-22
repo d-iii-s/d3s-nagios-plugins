@@ -9,17 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Added
+
+### Changed
+
+
+## v2.1.0 - 2026-09-22
+
+### Fixed
+
 * Prevent interactive commands from running inside the plugin
 
 ### Added
 
 * `check_sssd` for checking SSSD domain status
-
-### Changed
-
-### Deprecated
-
-### Removed
 
 
 ## v2.0.1 - 2026-08-13
