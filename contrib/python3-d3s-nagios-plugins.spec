@@ -57,5 +57,6 @@ mv %{buildroot}%{_bindir}/nagios_d3s_check_systemd_service %{buildroot}%{_libdir
 %license LICENSE
 %doc README.md
 %{_libdir}/nagios/plugins/
+%{_bindir}/nagios_d3s_status_dat_to_json
 
 %changelog

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* `nagios_d3s_status_dat_to_json` utility for converting `status.dat` to JSON
+
 ### Changed
 
 
