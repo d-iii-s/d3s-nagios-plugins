@@ -20,7 +20,8 @@ BuildRequires:  pyproject-rpm-macros
 
 
 %description
-Contains plugins check_health, check_memory, check_os_updates and check_systemd_service.
+Contains plugins check_health, check_memory, check_os_updates, check_sssd and
+check_systemd_service, and the nagios_d3s_status_dat_to_json utility.
 
 %prep
 %autosetup -n d3s_nagios_plugins-%{version}
